@@ -8,6 +8,7 @@ export default defineConfig({
       lazyLoading: true
     }
   },
+  base: '/LeagueAkari/',
   description: '兴趣使然、功能全面的英雄联盟工具集',
   themeConfig: {
     search: {
