@@ -17,7 +17,11 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: '开始使用', link: '/getting-started' },
-      { text: '常见问题', link: '/faq' }
+      { text: '常见问题', link: '/faq' },
+      {
+        text: '发行版本',
+        link: '/updates'
+      }
     ],
 
     sidebar: [
@@ -25,7 +29,11 @@ export default defineConfig({
         text: '总览',
         items: [
           { text: '开始使用', link: '/getting-started' },
-          { text: '常见问题', link: '/faq' }
+          { text: '常见问题', link: '/faq' },
+          {
+            text: '发行版本',
+            link: '/updates'
+          }
         ]
       }
     ],

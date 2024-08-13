@@ -3,8 +3,8 @@
 layout: home
 
 hero:
-  name: "League Akari"
-  text: "兴趣使然、功能全面的英雄联盟工具集"
+  name: 'League Akari'
+  text: '兴趣使然、功能全面的英雄联盟工具集'
   actions:
     - theme: brand
       text: 开始使用
@@ -21,4 +21,3 @@ features:
   - title: 功能全面
     details: 功能丰富，满足各种需求
 ---
-
