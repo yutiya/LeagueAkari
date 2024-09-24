@@ -2,4 +2,6 @@
 outline: deep
 ---
 
-前面的区域，以后再来探索吧。
+# 关于
+
+League Akari 是一个英雄联盟工具集，其大部分功能基于 LCU API 实现。

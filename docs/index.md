@@ -15,9 +15,9 @@ hero:
 
 features:
   - title: 易用
-    details: 无需安装，解压即用
+    details: 无需繁琐安装，解压后即可直接使用。
   - title: 开源
-    details: 开放源代码，永久免费
+    details: 拥抱开源，遵循 MIT 协议。
   - title: 功能全面
-    details: 功能丰富，满足各种需求
+    details: 多功能集成，一站式解决各类需求。
 ---
