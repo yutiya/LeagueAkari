@@ -900,7 +900,7 @@ defineExpose({
 </script>
 
 <style lang="less" scoped>
-@container-width: 1064px;
+@container-width: 1114px;
 
 .player-page {
   position: relative;
@@ -1123,7 +1123,7 @@ defineExpose({
     justify-content: center;
     align-items: center;
     height: 200px;
-    width: 740px;
+    width: 780px;
     background-color: #ffffff05;
     color: rgb(83, 83, 83);
   }

@@ -18,6 +18,16 @@ export class TgpApiModule extends MobxBasedBasicModule {
   private _tlm = new TgpLoginManager()
   private _ta = new TgpApi(this)
 
+  static SGP_QUEUE_TO_TGP_FILTER = new Map([
+    [null, ''],
+    [undefined, ''],
+    [-1, ''],
+    [420, 'rank'],
+    [450, 'aram'],
+    [440, 'team'],
+    [430, 'match']
+  ])
+
   constructor() {
     super('tgp-api')
   }
@@ -87,33 +97,46 @@ export class TgpApiModule extends MobxBasedBasicModule {
     ])
   }
 
+  async searchPlayer(nickname: string, pageSize: number = 1) {
+    const tgpPlayers = (await this._ta.searchPlayer(nickname, pageSize)).data
+    return tgpPlayers.players
+  }
+
+  async getBattleList(player: Player, page: number, pageSize: number, sgpQueueFilter: number | null) {
+    // TODO 所有队列，TGP中无训练模式，导致获取不一致
+    const maxPageSize = 10
+    let allBattles: Battle[] = []
+    let remainingBattles = pageSize
+    let currentOffset = (page - 1) * pageSize
+    const filter = TgpApiModule.SGP_QUEUE_TO_TGP_FILTER.get(sgpQueueFilter)
+    if (!TgpApiModule.SGP_QUEUE_TO_TGP_FILTER.has(sgpQueueFilter)) {
+      return allBattles
+    }
+
+    while (remainingBattles > 0) {
+      const currentSize = Math.min(remainingBattles, maxPageSize)
+      const tgpBattles = (await this._ta.getBattleList(player, currentOffset, currentSize, filter)).data
+
+      allBattles = allBattles.concat(tgpBattles.battles)
+
+      remainingBattles -= currentSize
+      currentOffset += currentSize
+    }
+
+    return allBattles
+  }
+
   private _setupMethodCall() {
     this.onCall('get-battle-detail', async (area: string, gameId: number) => {
       return (await this._ta.getBattleDetail(area, gameId)).data
     })
 
     this.onCall('search-player', async (nickname: string, pageSize: number) => {
-      const tgpPlayers = (await this._ta.searchPlayer(nickname, pageSize)).data
-      return tgpPlayers.players
+      return this.searchPlayer(nickname, pageSize)
     })
 
-    this.onCall('get-battle-list', async (player: Player, page: number, pageSize: number) => {
-      const maxPageSize = 10
-      let allBattles: Battle[] = []
-      let remainingBattles = pageSize
-      let currentOffset = (page - 1) * pageSize
-
-      while (remainingBattles > 0) {
-        const currentSize = Math.min(remainingBattles, maxPageSize)
-        const tgpBattles = (await this._ta.getBattleList(player, currentOffset, currentSize)).data
-
-        allBattles = allBattles.concat(tgpBattles.battles)
-
-        remainingBattles -= currentSize
-        currentOffset += currentSize
-      }
-
-      return allBattles
+    this.onCall('get-battle-list', async (player: Player, page: number, pageSize: number, sgpQueueFilter: number) => {
+      return this.getBattleList(player, page, pageSize, sgpQueueFilter)
     })
 
     this.onCall('get-qr-code', async () => {
