@@ -21,6 +21,15 @@ export default defineConfig({
       {
         text: '发行版本',
         link: '/updates'
+      },
+      {
+        text: '更多参考',
+        items: [
+          {
+            text: '发送模板',
+            link: '/in-game-send-templates'
+          }
+        ]
       }
     ],
 
