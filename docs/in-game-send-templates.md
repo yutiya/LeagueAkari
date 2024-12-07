@@ -341,7 +341,19 @@ function getTitles() {
       return players.includes(it.selfPuuid)
     })?.[0]
 
-    const messages = Object.entries(it.premadeTeams).filter(([_, groups]) => groups.length).map(([teamId, groups]) => {
+    const messages = Object.entries(it.premadeTeams).map(([teamId, groups]) => {
+      if (selfTeamId) {
+        if (it.target === 'ally') {
+          if (teamId !== selfTeamId) {
+            return null
+          }
+        } else if (it.target === 'enemy') {
+          if (teamId === selfTeamId) {
+            return null
+          }
+        }
+      }
+
       // 玩家选择转换成英雄名
       const names = groups.map((list) => {
         const names = list.map((puuid) => {
@@ -352,6 +364,10 @@ function getTitles() {
 
         return names
       })
+
+      if (!names.length) {
+        return null
+      }
 
       // 英雄名转换成空格分隔
       const texts = names.map((n) => {
@@ -366,7 +382,7 @@ function getTitles() {
       }
 
       return `${premadeTitle} ${texts.map((s) => `[${s}]`).join(' ')}`
-    })
+    }).filter(Boolean)
 
     return [...one, ...messages]
   }
