@@ -15,6 +15,7 @@ import { AkariLogger } from '../logger-factory'
 import { MobxUtilsMain } from '../mobx-utils'
 import { SetterSettingService } from '../setting-factory/setter-setting-service'
 import { WindowManagerSettings, WindowManagerState } from './state'
+import { OverlayMain } from '../overlay'
 
 export class WindowManagerMain implements IAkariShardInitDispose {
   static id = 'window-manager-main'
@@ -25,7 +26,8 @@ export class WindowManagerMain implements IAkariShardInitDispose {
     'logger-factory-main',
     'setting-factory-main',
     'league-client-main',
-    'config-migrate-main'
+    'config-migrate-main',
+    'overlay-main'
   ]
 
   static MAIN_WINDOW_MIN_SIZE = [840, 600] as [number, number]
@@ -49,6 +51,7 @@ export class WindowManagerMain implements IAkariShardInitDispose {
   private readonly _setting: SetterSettingService
   private readonly _lc: LeagueClientMain
   private readonly _shared: AkariSharedGlobalShard
+  private readonly _overlay: OverlayMain
 
   /**
    * 标记位, 用于判断是否是即将退出应用程序 (需要全部窗口关闭)
@@ -81,6 +84,7 @@ export class WindowManagerMain implements IAkariShardInitDispose {
       this.settings
     )
     this._lc = deps['league-client-main']
+    this._overlay = deps['overlay-main']
   }
 
   async onInit() {
@@ -289,8 +293,9 @@ export class WindowManagerMain implements IAkariShardInitDispose {
         this._adjustAuxWindowForFunctionality(f)
       }
     )
-  }
 
+  }
+    
   showOrRestoreAuxWindow(inactive = false) {
     if (this._aw && this.state.auxWindowReady) {
       if (!this.state.auxWindowShow) {
@@ -380,6 +385,7 @@ export class WindowManagerMain implements IAkariShardInitDispose {
   private _handleCloseMainWindow(event: Event) {
     if (this._willQuit) {
       this._aw?.close()
+      this.closeOverlayWindow()
       return
     }
 
@@ -656,9 +662,9 @@ export class WindowManagerMain implements IAkariShardInitDispose {
       this.state.setAuxWindowShow(false)
     })
 
-    this._aw.on('always-on-top-changed', (_, b) => {
-      this._setting.set('auxWindowPinned', b)
-    })
+    // this._aw.on('always-on-top-changed', (_, b) => {
+    //   this._setting.set('auxWindowPinned', b)
+    // })
 
     this._aw.on('closed', () => {
       this.state.setAuxWindowReady(false)
@@ -697,6 +703,11 @@ export class WindowManagerMain implements IAkariShardInitDispose {
     }
 
     this._log.info('创建辅助窗口')
+  }
+
+  closeOverlayWindow() {
+    this._overlay.close()
+    this._log.info('Overlay窗口关闭')
   }
 
   closeAuxWindow() {
@@ -883,6 +894,11 @@ export class WindowManagerMain implements IAkariShardInitDispose {
     )
   }
 
+  createOverlayWindow() {
+    this._overlay.create()
+    this._log.info('Overlay窗口创建')
+  }
+
   createAuxWindow() {
     if (!this._aw || this._aw.isDestroyed()) {
       this._createAuxWindow()
@@ -937,6 +953,10 @@ export class WindowManagerMain implements IAkariShardInitDispose {
         this._mw.minimize()
       }
     }
+  }
+
+  showOverlay() {
+    this._overlay.show()
   }
 
   forceMainWindowQuit() {

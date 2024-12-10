@@ -18,6 +18,7 @@ CommonButtons:
   announcement: Announcement
   github: Project GitHub
   auxWindow: Auxiliary Window
+  overlay: Overlay
 
 TrafficButtons:
   minimize: Minimize
@@ -1594,6 +1595,12 @@ InGameSend:
       label: Delete
       button: Delete
       popconfirm: Confirm deletion of this custom sending item?
+
+  settings:
+    title: Settings
+    sendInterval:
+      label: Send Interval (ms)
+      description: Set the interval between each simulated sending action
 
   compiled: Compiled
   saved: Saved
